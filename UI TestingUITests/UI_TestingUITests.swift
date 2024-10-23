@@ -6,36 +6,43 @@
 //
 
 import XCTest
+@testable import UI_Testing
 
 final class UI_TestingUITests: XCTestCase {
-
+    
+    var app: XCUIApplication!
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
+        app = XCUIApplication()
         app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
-
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
+    
+    override func tearDownWithError() throws {
+        app = nil
+    }
+    
+    func testCarListExist() throws {
+        // Assert the existence of the navigation bar with the title "Car List"
+        XCTAssertTrue(app.navigationBars["Car List"].exists)
+        
+        let carList = app.collectionViews["CAR"]
+                
+        // Assert the existence of car list
+        XCTAssertTrue(carList.exists, "The list car with Identifiers.Lists.CAR does not exist.")
+        XCTAssertTrue(carList.cells.count > 0, "The list should have not more than 0 items.")
+    }
+    
+    func testRedirectToCarDetails() throws {
+       
+        let carList = app.collectionViews["CAR"]
+        
+        // Tapped on the first item
+        carList.cells.element(boundBy: 0).tap()
+        
+        // Assert the existence of car image and description
+        XCTAssertTrue(app.images["CAR IMAGES"].exists)
+        XCTAssertTrue(app.staticTexts["CAR DESCRIPTION"].exists)
     }
 }
+
